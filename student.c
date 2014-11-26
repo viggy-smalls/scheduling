@@ -133,7 +133,15 @@ extern void terminate(unsigned int cpu_id)
  */
 extern void wake_up(pcb_t *process)
 {
-    
+	struct node *head = ready_queue;
+	
+	while(head != 0){
+		
+			if(head->next == 0)
+				head->next = *process;
+			head = head->next;
+			
+	}
 }
 
 
