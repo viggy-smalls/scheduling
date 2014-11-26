@@ -29,7 +29,6 @@ static pthread_mutex_t current_mutex;
 struct node {
 	pcb_t *proc;
 	struct node *next;
-	
 }
 
 struct node ready_queue;
