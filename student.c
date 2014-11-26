@@ -54,16 +54,12 @@ static void schedule(unsigned int cpu_id)
 {
 	node *head = ready_queue;
 	
-	if(head->proc == NULL){ //??? This part is fucked up
+	if(head->proc == NULL){ 
 		context_switch(cpu_id, NULL, -1);
-		
-		pthread_mutex_lock(&current_mutex);
-		*current[cpu_id] = 
-		pthread_mutex_unlock(&current_mutex);
 	}
 	else{
 		ready_queue->next = ready_queue->next->next;
-		head->proc->state = RUNNING;
+		head->proc->state = PROCESS_RUNNING;
 		
 		pthread_mutex_lock(&current_mutex);
 		*current[cpu_id] = proc;
