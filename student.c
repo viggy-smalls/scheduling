@@ -64,7 +64,9 @@ static void schedule(unsigned int cpu_id)
 	else{
 		ready_queue->next = ready_queue->next->next;
 		head->proc->state = RUNNING;
+		pthread_mutex_lock(&current_mutex);
 		*current[cpu_id] = proc;
+		pthread_mutex_unlock(&current_mutex);
 		context_switch(cpu_id, head->proc, -1);
 	}
 }
