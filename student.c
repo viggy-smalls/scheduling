@@ -52,7 +52,7 @@ struct node ready_queue;
  */
 static void schedule(unsigned int cpu_id)
 {
-	struct node *head = ready_queue;
+	struct node *head = &ready_queue;
 	
 	if(head->proc == NULL){ 
 		context_switch(cpu_id, NULL, -1);
