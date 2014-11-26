@@ -164,7 +164,7 @@ extern void wake_up(pcb_t *process)
 		head = head->next;		
 	}
 	head->next = new;
-	process->state = READY;
+	process->state = PROCESS_READY;
 	
 }
 
