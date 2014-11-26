@@ -139,8 +139,12 @@ extern void wake_up(pcb_t *process)
 	
 	while(head != 0){
 		
-			if(head->next == 0)
-				head->next = *process;
+			if(head->next == 0){
+				node *new;
+				new->proc = *process;
+				new->next=0;
+				head->next = new;
+			}
 			head = head->next;
 			
 	}
