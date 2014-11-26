@@ -53,10 +53,21 @@ struct node ready_queue;
 static void schedule(unsigned int cpu_id)
 {
 	node *head = ready_queue;
-	ready_queue->next = ready_queue->next->next;
-	head->proc->state = RUNNING;
+	
+	if(head->proc == NULL){ //??? This part is fucked up
+		context_switch(cpu_id, NULL, -1);
+		pthread_mutex_lock(&current_mutex);
+		*current[cpu_id] = 
+		pthread_mutex_unlock(&current_mutex);
+		
 	}
-
+	else{
+		ready_queue->next = ready_queue->next->next;
+		head->proc->state = RUNNING;
+		*current[cpu_id] = proc;
+		context_switch(cpu_id, head->proc, -1);
+	}
+}
 
 /*
  * idle() is your idle process.  It is called by the simulator when the idle
