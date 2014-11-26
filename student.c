@@ -130,6 +130,8 @@ extern void yield(unsigned int cpu_id)
 extern void terminate(unsigned int cpu_id)
 {
     /* FIX ME */
+	//mark as terminated
+	schedule(cpu_id);
 }
 
 
@@ -150,19 +152,18 @@ extern void terminate(unsigned int cpu_id)
  */
 extern void wake_up(pcb_t *process)
 {
-	struct node *head = ready_queue;
+	struct node *head;
+	head = &ready_queue;
 	
-	while(head != 0){
-		
-			if(head->next == 0){
-				node *new;
-				new->proc = *process;
-				new->next=0;
-				head->next = new;
-			}
-			head = head->next;
-			
+	struct node *new;
+	new->next = NULL;
+	new->proc = process;
+	
+	//going to the end of the linked list and adding process to
+	while(head->next != NULL){
+		head = head->next;		
 	}
+	head->next = new;
 	process->state = READY;
 	
 }
