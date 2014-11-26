@@ -26,7 +26,12 @@
 static pcb_t **current;
 static pthread_mutex_t current_mutex;
 
+struct node {
+	pcb_t *proc;
+	struct node *next;
+}
 
+struct node ready_queue;
 /*
  * schedule() is your CPU scheduler.  It should perform the following tasks:
  *
@@ -45,7 +50,7 @@ static pthread_mutex_t current_mutex;
  */
 static void schedule(unsigned int cpu_id)
 {
-    /* FIX ME */
+	
 }
 
 
@@ -128,7 +133,7 @@ extern void terminate(unsigned int cpu_id)
  */
 extern void wake_up(pcb_t *process)
 {
-    /* FIX ME */
+    
 }
 
 
