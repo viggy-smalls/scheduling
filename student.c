@@ -26,12 +26,14 @@
 static pcb_t **current;
 static pthread_mutex_t current_mutex;
 
-struct node {
+typedef struct node {
 	pcb_t *proc;
-	struct node *next;
+	node *next;
 }
 
 struct node ready_queue;
+
+
 /*
  * schedule() is your CPU scheduler.  It should perform the following tasks:
  *
