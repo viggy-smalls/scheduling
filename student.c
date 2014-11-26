@@ -52,8 +52,10 @@ struct node ready_queue;
  */
 static void schedule(unsigned int cpu_id)
 {
-	
-}
+	node *head = ready_queue;
+	ready_queue->next = ready_queue->next->next;
+	head->proc->state = RUNNING;
+	}
 
 
 /*
