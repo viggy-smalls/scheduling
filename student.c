@@ -54,18 +54,19 @@ static void schedule(unsigned int cpu_id)
 {
 	struct node *head = &ready_queue;
 	
-	if(head->proc == NULL){ 
+	if(head == NULL){ 
 		context_switch(cpu_id, NULL, -1);
 	}
 	else{
-		ready_queue->next = ready_queue->next->next;
-		head->proc->state = PROCESS_RUNNING;
-		
+		//critical section
 		pthread_mutex_lock(&current_mutex);
-		*current[cpu_id] = proc;
-		pthread_mutex_unlock(&current_mutex);
-		
+		//remove process
+		ready_queue = ready_queue->next;
+		current[cpu_id] = head->proc;
+		head->proc->state = PROCESS_RUNNING;
+		//context switch
 		context_switch(cpu_id, head->proc, -1);
+		pthread_mutex_unlock(&current_mutex);
 	}
 }
 
