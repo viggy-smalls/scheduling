@@ -26,10 +26,10 @@
 static pcb_t **current;
 static pthread_mutex_t current_mutex;
 
-typedef struct node {
+struct node{
 	pcb_t *proc;
 	struct node *next;
-}
+};
 
 struct node *ready_queue;
 
@@ -52,7 +52,7 @@ struct node *ready_queue;
  */
 static void schedule(unsigned int cpu_id)
 {
-	struct node *head = &ready_queue;
+	struct node *head = ready_queue;
 	
 	if(head == NULL){ 
 		context_switch(cpu_id, NULL, -1);
@@ -151,9 +151,9 @@ extern void terminate(unsigned int cpu_id)
  */
 extern void wake_up(pcb_t *process)
 {
-	struct node *head = &ready_queue;
+	struct node *head = ready_queue;
 	
-	struct node *new;
+	struct node *new = malloc(sizeof(struct node));
 	new->next = NULL;
 	new->proc = process;
 	
