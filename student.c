@@ -31,7 +31,7 @@ typedef struct node {
 	struct node *next;
 }
 
-struct node ready_queue;
+struct node *ready_queue;
 
 
 /*
