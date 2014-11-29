@@ -44,8 +44,8 @@ struct node *ready_queue;
  *
  *   3. Call context_switch(), to tell the simulator which process to execute
  *      next on the CPU.  If no process is runnable, call context_switch()
- *      with a pointer to NULL to select the idle process.
  *	The current array (see above) is how you access the currently running process indexed by the cpu id. 
+ *      with a pointer to NULL to select the idle process.
  *	See above for full description.
  *	context_switch() is prototyped in os-sim.h. Look there for more information 
  *	about it and its parameters.
@@ -104,7 +104,31 @@ extern void idle(unsigned int cpu_id)
  */
 extern void preempt(unsigned int cpu_id)
 {
-    /* FIX ME */
+	struct node *head = ready_queue;
+	struct node *temp = malloc(sizeof(struct node));
+	
+    //Entry section
+	pthread_mutex_lock(&current_mutex);
+	
+	//Going to the end of the linked list 
+	while(head->next != NULL){
+		head = head->next;		
+	}
+
+	//Make a temp node to store at the end of ready_queue
+	temp->proc = current[cpu_id];
+	temp->next = NULL;
+	temp->proc->state = PROCESS_READY;
+	head->next = temp;
+	
+	//Take this process out of current ??Needed?
+	//current[cpu_id] = NULL;
+	
+	//Exit section
+	pthread_mutex_unlock(&current_mutex);
+	
+	
+	
 }
 
 
