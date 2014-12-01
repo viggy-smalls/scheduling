@@ -24,6 +24,7 @@
  * for your use.
  */
 static pcb_t **current; 
+static pcb_t *waiting; 
 static pthread_mutex_t current_mutex;
 static pthread_mutex_t ready_mutex;
 
