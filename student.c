@@ -24,8 +24,12 @@
  * for your use.
  */
 static pcb_t **current; 
+static pcb_t *waiting; 
 static pthread_mutex_t current_mutex;
 static pthread_mutex_t ready_mutex;
+static int rr;
+static int preempt_time;
+
 
 struct node{
 	pcb_t *proc;
@@ -243,10 +247,13 @@ int main(int argc, char *argv[])
     cpu_count = atoi(argv[1]);
 
     /* FIX ME - Add support for -r and -p parameters*/
-	switch (argv){
-		first_param = argv[2];
-		second_param = argv[3];
-		} 
+	if(argv[2] == 'r'){
+		rr = 1;
+		if(argv[3] != NULL){
+				preempt_time = argv[3];
+		}
+	}
+	
     /* Allocate the current[] array and its mutex */
     current = malloc(sizeof(pcb_t*) * cpu_count);
     assert(current != NULL);
