@@ -65,11 +65,11 @@ static void schedule(unsigned int cpu_id)
 		
 		//remove process
 		ready = ready->next;
-		current[cpu_id] = head->proc;
-		head->proc->state = PROCESS_RUNNING;
+		current[cpu_id] = head;
+		head->state = PROCESS_RUNNING;
 		
 		//context switch
-		context_switch(cpu_id, head->proc, -1);
+		context_switch(cpu_id, head, -1);
 		pthread_mutex_unlock(&current_mutex);
 	}
 }
@@ -138,9 +138,9 @@ extern void preempt(unsigned int cpu_id)
 
 	//Make a temp node to store at the end of ready
 	pthread_mutex_lock(&ready_mutex);
-	temp->proc = current[cpu_id];
+	temp = current[cpu_id];
 	temp->next = NULL;
-	temp->proc->state = PROCESS_READY;
+	temp->state = PROCESS_READY;
 	head->next = temp;
 	pthread_mutex_unlock(&ready_mutex);
 	
@@ -210,7 +210,7 @@ extern void wake_up(pcb_t *process)
 	
 	pcb_t *new = malloc(sizeof(pcb_t));
 	new->next = NULL;
-	new->proc = process;
+	new = process;
 	
 	//going to the end of the linked list and adding process to
 	while(head->next != NULL){
