@@ -97,9 +97,19 @@ extern void idle(unsigned int cpu_id)
     mt_safe_usleep(1000000);
 }
 
-static void add_to_waiting(pcb_t *pcb, unsigned int execution_time)
+static void add_to_waiting(pcb_t *pcb)
 {
-	
+	if(waiting == NULL)
+		waiting = pcb;
+	else if (waiting->next == NULL)
+		waiting->next = pcd;
+	else {
+		struct node *temp = malloc(sizeof(struct node));
+		temp = waiting;
+		while (temp->next != null)
+			temp = temp->next;
+		temp->next = pcb;
+	}
 }
 /*
  * preempt() is the handler called by the simulator when a process is
