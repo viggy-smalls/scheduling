@@ -94,7 +94,29 @@ extern void idle(unsigned int cpu_id)
     mt_safe_usleep(1000000);
 }
 
+static void add_to_waiting(pcb_t *pcb, unsigned int execution_time)
+{
+    io_request *r;
 
+    /* Build I/O Request */
+    r = malloc(sizeof(io_request));
+    assert(r != NULL);
+    r->pcb = pcb;
+    r->execution_time = execution_time;
+    r->next = NULL;
+
+    /* Add request to head of queue */
+    if (io_queue_tail != NULL)
+    {
+        io_queue_tail->next = r;
+        io_queue_tail = r;
+    }
+    else
+    {
+        io_queue_head = r;
+        io_queue_tail = r;
+    }
+}
 /*
  * preempt() is the handler called by the simulator when a process is
  * preempted due to its timeslice expiring.
@@ -122,7 +144,7 @@ extern void preempt(unsigned int cpu_id)
 	head->next = temp;
 	
 	//Place into waiting queue and schedule a new process
-	submit_io_request(current[cpu_id], -1);
+	add_to_waiting(current[cpu_id], -1);
 	current[cpu_id] = NULL;
 	schedule(cpu_id);
 	
@@ -146,7 +168,7 @@ extern void yield(unsigned int cpu_id)
 	
 	//Yield process and schedule another
 	current[cpu_id]->state = PROCESS_WAITING;
-	submit_io_request(current[cpu_id], -1);
+	add_to_waiting(current[cpu_id], -1);
 	schedule(cpu_id);
 	
 	//Exit Section
