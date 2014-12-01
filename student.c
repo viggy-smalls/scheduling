@@ -26,6 +26,7 @@
  
 static pcb_t **current; 
 static pcb_t *waiting; 
+static pcb_t *ready;
 static pthread_mutex_t current_mutex;
 static pthread_mutex_t ready_mutex;
 static pthread_cond_t ready_cond;
@@ -33,12 +34,6 @@ static int rr;
 static int preempt_time;
 
 
-struct node{
-	pcb_t *proc;
-	struct node *next;
-};
-
-struct node *ready_queue;
 
 
 /*
@@ -59,7 +54,7 @@ struct node *ready_queue;
  */
 static void schedule(unsigned int cpu_id)
 {
-	struct node *head = ready_queue;
+	pcb_t *head = ready;
 	
 	if(head == NULL){ 
 		context_switch(cpu_id, NULL, -1);
@@ -69,7 +64,7 @@ static void schedule(unsigned int cpu_id)
 		pthread_mutex_lock(&current_mutex);
 		
 		//remove process
-		ready_queue = ready_queue->next;
+		ready = ready->next;
 		current[cpu_id] = head->proc;
 		head->proc->state = PROCESS_RUNNING;
 		
@@ -89,7 +84,7 @@ static void schedule(unsigned int cpu_id)
 extern void idle(unsigned int cpu_id)
 {
     /* FIX ME */
-    while(ready_queue == NULL){
+    while(ready == NULL){
 		pthread_cond_wait(&ready_cond, &ready_mutex);
 	}
 	
@@ -130,8 +125,8 @@ static void add_to_waiting(pcb_t *pcb)
  */
 extern void preempt(unsigned int cpu_id)
 {
-	struct node *head = ready_queue;
-	struct node *temp = malloc(sizeof(struct node));
+	pcb_t *head = ready;
+	pcb_t *temp = malloc(sizeof(pcb_t));
 	
     //Entry section
 	pthread_mutex_lock(&current_mutex);
@@ -141,7 +136,7 @@ extern void preempt(unsigned int cpu_id)
 		head = head->next;		
 	}
 
-	//Make a temp node to store at the end of ready_queue
+	//Make a temp node to store at the end of ready
 	pthread_mutex_lock(&ready_mutex);
 	temp->proc = current[cpu_id];
 	temp->next = NULL;
@@ -211,9 +206,9 @@ extern void terminate(unsigned int cpu_id)
  */
 extern void wake_up(pcb_t *process)
 {
-	struct node *head = ready_queue;
+	pcb_t *head = ready;
 	
-	struct node *new = malloc(sizeof(struct node));
+	pcb_t *new = malloc(sizeof(pcb_t));
 	new->next = NULL;
 	new->proc = process;
 	
@@ -222,7 +217,7 @@ extern void wake_up(pcb_t *process)
 		head = head->next;		
 	}
 	
-	//Insert into ready_queue
+	//Insert into ready
 	pthread_mutex_lock(&ready_mutex);
 	head->next = new;
 	pthread_mutex_unlock(&ready_mutex);
