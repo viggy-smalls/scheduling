@@ -61,10 +61,12 @@ static void schedule(unsigned int cpu_id)
 	else{
 		//critical section
 		pthread_mutex_lock(&current_mutex);
+		
 		//remove process
 		ready_queue = ready_queue->next;
 		current[cpu_id] = head->proc;
 		head->proc->state = PROCESS_RUNNING;
+		
 		//context switch
 		context_switch(cpu_id, head->proc, -1);
 		pthread_mutex_unlock(&current_mutex);
@@ -97,26 +99,7 @@ extern void idle(unsigned int cpu_id)
 
 static void add_to_waiting(pcb_t *pcb, unsigned int execution_time)
 {
-    io_request *r;
-
-    /* Build I/O Request */
-    r = malloc(sizeof(io_request));
-    assert(r != NULL);
-    r->pcb = pcb;
-    r->execution_time = execution_time;
-    r->next = NULL;
-
-    /* Add request to head of queue */
-    if (io_queue_tail != NULL)
-    {
-        io_queue_tail->next = r;
-        io_queue_tail = r;
-    }
-    else
-    {
-        io_queue_head = r;
-        io_queue_tail = r;
-    }
+	
 }
 /*
  * preempt() is the handler called by the simulator when a process is
@@ -250,7 +233,10 @@ int main(int argc, char *argv[])
     cpu_count = atoi(argv[1]);
 
     /* FIX ME - Add support for -r and -p parameters*/
-
+	switch (argv){
+		first_param = argv[2];
+		second_param = argv[3];
+		} 
     /* Allocate the current[] array and its mutex */
     current = malloc(sizeof(pcb_t*) * cpu_count);
     assert(current != NULL);
