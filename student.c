@@ -25,6 +25,7 @@
  */
 static pcb_t **current; 
 static pthread_mutex_t current_mutex;
+static pthread_mutex_t ready_mutex;
 
 struct node{
 	pcb_t *proc;
@@ -138,10 +139,12 @@ extern void preempt(unsigned int cpu_id)
 	}
 
 	//Make a temp node to store at the end of ready_queue
+	pthread_mutex_lock(&ready_mutex);
 	temp->proc = current[cpu_id];
 	temp->next = NULL;
 	temp->proc->state = PROCESS_READY;
 	head->next = temp;
+	pthread_mutex_unlock(&ready_mutex);
 	
 	//Place into waiting queue and schedule a new process
 	add_to_waiting(current[cpu_id], -1);
@@ -215,7 +218,12 @@ extern void wake_up(pcb_t *process)
 	while(head->next != NULL){
 		head = head->next;		
 	}
+	
+	//Insert into ready_queue
+	pthread_mutex_lock(&ready_mutex);
 	head->next = new;
+	pthread_mutex_unlock(&ready_mutex);
+
 	process->state = PROCESS_READY;
 	
 }
