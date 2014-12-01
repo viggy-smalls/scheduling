@@ -161,8 +161,7 @@ extern void yield(unsigned int cpu_id)
  */
 extern void terminate(unsigned int cpu_id)
 {
-    /* FIX ME */
-	//mark as terminated
+	current[cpu_id]->state = PROCESS_TERMINATED;
 	schedule(cpu_id);
 }
 
