@@ -112,11 +112,11 @@ static void add_to_waiting(pcb_t *pcb)
 	if(waiting == NULL)
 		waiting = pcb;
 	else if (waiting->next == NULL)
-		waiting->next = pcd;
+		waiting->next = pcb;
 	else {
-		struct node *temp = malloc(sizeof(struct node));
+		pcb_t *temp = malloc(sizeof(pcb_t));
 		temp = waiting;
-		while (temp->next != null)
+		while (temp->next != NULL)
 			temp = temp->next;
 		temp->next = pcb;
 	}
@@ -150,7 +150,7 @@ extern void preempt(unsigned int cpu_id)
 	pthread_mutex_unlock(&ready_mutex);
 	
 	//Place into waiting queue and schedule a new process
-	add_to_waiting(current[cpu_id], -1);
+	add_to_waiting(current[cpu_id]);
 	current[cpu_id] = NULL;
 	schedule(cpu_id);
 	
@@ -174,7 +174,7 @@ extern void yield(unsigned int cpu_id)
 	
 	//Yield process and schedule another
 	current[cpu_id]->state = PROCESS_WAITING;
-	add_to_waiting(current[cpu_id], -1);
+	add_to_waiting(current[cpu_id]);
 	schedule(cpu_id);
 	
 	//Exit Section
@@ -253,10 +253,10 @@ int main(int argc, char *argv[])
     cpu_count = atoi(argv[1]);
 
     /* FIX ME - Add support for -r and -p parameters*/
-	if(argv[2] == 'r'){
+	if((int)argv[2] == 'r'){
 		rr = 1;
 		if(argv[3] != NULL){
-				preempt_time = argv[3];
+				preempt_time = (int)argv[3];
 		}
 	}
 	
