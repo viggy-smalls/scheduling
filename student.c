@@ -23,7 +23,7 @@
  * will need to use a mutex to protect it.  current_mutex has been provided
  * for your use.
  */
-static pcb_t **current;
+static pcb_t **current; 
 static pthread_mutex_t current_mutex;
 
 struct node{
@@ -121,13 +121,13 @@ extern void preempt(unsigned int cpu_id)
 	temp->proc->state = PROCESS_READY;
 	head->next = temp;
 	
-	//Take this process out of current ??Needed?
-	//current[cpu_id] = NULL;
+	//Place into waiting queue and schedule a new process
+	submit_io_request(current[cpu_id], -1);
+	current[cpu_id] = NULL;
+	schedule(cpu_id);
 	
 	//Exit section
 	pthread_mutex_unlock(&current_mutex);
-	
-	
 	
 }
 
@@ -144,7 +144,9 @@ extern void yield(unsigned int cpu_id)
     //Critical Section
 	pthread_mutex_lock(&current_mutex);
 	
+	//Yield process and schedule another
 	current[cpu_id]->state = PROCESS_WAITING;
+	submit_io_request(current[cpu_id], -1);
 	schedule(cpu_id);
 	
 	//Exit Section
