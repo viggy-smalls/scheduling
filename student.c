@@ -24,7 +24,6 @@
  * for your use.
  */
 static pcb_t **current; 
-static pcb_t *waiting;
 static pthread_mutex_t current_mutex;
 static pthread_mutex_t ready_mutex;
 
@@ -96,11 +95,28 @@ extern void idle(unsigned int cpu_id)
     mt_safe_usleep(1000000);
 }
 
-static void add_to_waiting(pcb_t *pcb, pcb_t *new)
+static void add_to_waiting(pcb_t *pcb, unsigned int execution_time)
 {
-    if (pcb->next == NULL)
-		pcb->next = new;
-	else add_to_waiting(pcb->next, new);
+    io_request *r;
+
+    /* Build I/O Request */
+    r = malloc(sizeof(io_request));
+    assert(r != NULL);
+    r->pcb = pcb;
+    r->execution_time = execution_time;
+    r->next = NULL;
+
+    /* Add request to head of queue */
+    if (io_queue_tail != NULL)
+    {
+        io_queue_tail->next = r;
+        io_queue_tail = r;
+    }
+    else
+    {
+        io_queue_head = r;
+        io_queue_tail = r;
+    }
 }
 /*
  * preempt() is the handler called by the simulator when a process is
