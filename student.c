@@ -23,10 +23,12 @@
  * will need to use a mutex to protect it.  current_mutex has been provided
  * for your use.
  */
+ 
 static pcb_t **current; 
 static pcb_t *waiting; 
 static pthread_mutex_t current_mutex;
 static pthread_mutex_t ready_mutex;
+static pthread_cond_t ready_cond;
 static int rr;
 static int preempt_time;
 
@@ -87,7 +89,11 @@ static void schedule(unsigned int cpu_id)
 extern void idle(unsigned int cpu_id)
 {
     /* FIX ME */
-    schedule(0);
+    while(ready_queue != NULL){
+		pthread_cond_wait(&ready_cond, &ready_mutex);
+	}
+	
+	schedule(cpu_id);
 
     /*
      * REMOVE THE LINE BELOW AFTER IMPLEMENTING IDLE()
