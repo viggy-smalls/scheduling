@@ -95,28 +95,19 @@ extern void idle(unsigned int cpu_id)
     mt_safe_usleep(1000000);
 }
 
-static void add_to_waiting(pcb_t *pcb, unsigned int execution_time)
+static void add_to_waiting(pcb_t *pcb)
 {
-    io_request *r;
-
-    /* Build I/O Request */
-    r = malloc(sizeof(io_request));
-    assert(r != NULL);
-    r->pcb = pcb;
-    r->execution_time = execution_time;
-    r->next = NULL;
-
-    /* Add request to head of queue */
-    if (io_queue_tail != NULL)
-    {
-        io_queue_tail->next = r;
-        io_queue_tail = r;
-    }
-    else
-    {
-        io_queue_head = r;
-        io_queue_tail = r;
-    }
+   if(waiting == NULL)
+		waiting = pcb;
+	else if (waiting->next == NULL)
+		waiting->next = pcd;
+	else {
+		struct node *temp = malloc(sizeof(struct node));
+		temp = waiting;
+		while (temp->next != null)
+			temp = temp->next;
+		temp->next = pcb;
+	}
 }
 /*
  * preempt() is the handler called by the simulator when a process is
