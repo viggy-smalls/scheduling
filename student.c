@@ -89,7 +89,7 @@ static void schedule(unsigned int cpu_id)
 extern void idle(unsigned int cpu_id)
 {
     /* FIX ME */
-    while(ready_queue != NULL){
+    while(ready_queue == NULL){
 		pthread_cond_wait(&ready_cond, &ready_mutex);
 	}
 	
