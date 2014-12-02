@@ -57,7 +57,7 @@ static void schedule(unsigned int cpu_id)
 	pcb_t *head = ready;
 	
 	if(head == NULL){ 
-		context_switch(cpu_id, NULL, -1);
+		context_switch(cpu_id, NULL, preempt_time);
 	}
 	else{
 		//critical section
@@ -69,7 +69,7 @@ static void schedule(unsigned int cpu_id)
 		head->state = PROCESS_RUNNING;
 		
 		//context switch
-		context_switch(cpu_id, head, -1);
+		context_switch(cpu_id, head, preempt_time);
 		pthread_mutex_unlock(&current_mutex);
 	}
 }
@@ -251,7 +251,10 @@ int main(int argc, char *argv[])
 	if((int)argv[2] == 'r'){
 		rr = 1;
 		if(argv[3] != NULL){
-				preempt_time = (int)argv[3];
+			preempt_time = (int)argv[3];
+		}
+		else{
+			preempt_time = -1;
 		}
 	}
 	
@@ -259,7 +262,11 @@ int main(int argc, char *argv[])
     current = malloc(sizeof(pcb_t*) * cpu_count);
     assert(current != NULL);
     pthread_mutex_init(&current_mutex, NULL);
-
+	
+	/* Allocate other mutexes and condition variables as well */
+	pthread_mutex_init(&ready_mutex, NULL);
+	pthread_cond_init(&ready_cond, NULL);
+	
     /* Start the simulator in the library */
     start_simulator(cpu_count);
 
