@@ -233,10 +233,12 @@ extern void wake_up(pcb_t *process)
 	new = process;
 	
 	//going to the end of the linked list and adding process to
-	while(head->next != NULL){
-		head = head->next;		
-	}
+	if(head != null){
 	
+		while(head->next != NULL){
+			head = head->next;		
+		}
+	}
 	//Insert into ready
 	pthread_mutex_lock(&ready_mutex);
 	head->next = new;
