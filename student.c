@@ -132,21 +132,25 @@ extern void idle(unsigned int cpu_id)
  */
 extern void preempt(unsigned int cpu_id)
 {
-	pcb_t *head = ready;
+	*head = ready;
 	
     //Entry section
 	pthread_mutex_lock(&current_mutex);
 	pthread_mutex_lock(&ready_mutex);
 	current[cpu_id]->state = PROCESS_READY;
 	
-	if(head == NULL){
-		head = current[cpu_id];
+	if(ready == NULL){
+		ready = current[cpu_id];
 	}
 	else{
 		//Going to the end of the linked list 
 		while(head->next != NULL){
-			head = head->next;		
+			if(head->pid == head->next->pid){
+				head->next = NULL;
+			}
+			else head = head->next;		
 		}
+			
 		head->next = current[cpu_id];
 	}
 
