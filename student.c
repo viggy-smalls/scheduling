@@ -130,7 +130,6 @@ extern void idle(unsigned int cpu_id)
 extern void preempt(unsigned int cpu_id)
 {
 	pcb_t *head = ready;
-	pcb_t *temp = malloc(sizeof(pcb_t));
 	
     //Entry section
 	pthread_mutex_lock(&current_mutex);
