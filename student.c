@@ -233,7 +233,7 @@ extern void wake_up(pcb_t *process)
 	new = process;
 	
 	//going to the end of the linked list and adding process to
-	if(head != null){
+	if(head != NULL){
 	
 		while(head->next != NULL){
 			head = head->next;		
