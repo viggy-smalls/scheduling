@@ -26,13 +26,15 @@
  */
  
 static pcb_t **current;  
-static pcb_t *ready;
+pcb_t *ready;
+
 static pthread_mutex_t current_mutex;
 static pthread_mutex_t ready_mutex;
-static pthread_cond_t ready_cond;
-static int waiting[16];
-static int rr;
-static int preempt_time;
+pthread_cond_t ready_cond;
+
+int waiting[16];
+int rr;
+int preempt_time;
 
 
 
