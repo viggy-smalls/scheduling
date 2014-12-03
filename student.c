@@ -234,10 +234,13 @@ extern void wake_up(pcb_t *process)
 		
 		//Iterate through linked list
 		while(head->next != NULL){
-		printf("nsdf\n");
-				head = head->next;		
+			if(head->pid == head->next->pid){
+				head->next = NULL;
 			}
-		ready->next = process;
+			else head = head->next;		
+		}
+			
+		head->next = process;
 	}
 	pthread_cond_signal(&ready_cond);
 	pthread_mutex_unlock(&ready_mutex);
