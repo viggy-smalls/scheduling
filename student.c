@@ -100,7 +100,7 @@ extern void idle(unsigned int cpu_id)
 	pthread_mutex_lock(&current_mutex);
 	waiting[cpu_id] = 0;
 	
-    while(pthread_cond_wait(&ready_cond, &ready_mutex));
+    while(pthread_cond_wait(&ready_cond, &current_mutex));
 	
 	//Exit
 	pthread_mutex_unlock(&current_mutex);
