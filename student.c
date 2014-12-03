@@ -69,13 +69,8 @@ static void schedule(unsigned int cpu_id)
 		temp = head;
 		temp->state = PROCESS_RUNNING;
 		
-		if(head == head->next){
-			head = NULL;
-			head->next = NULL;
-		}
-		else{
-			head = temp->next;
-		}
+		head = head->next;
+	
 		
 		//Lock current mutex
 		pthread_mutex_lock(&current_mutex);
