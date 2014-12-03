@@ -260,7 +260,7 @@ extern void wake_up(pcb_t *process)
  * You will need to modify it to support the -r and -p command-line parameters.
  */
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[]){
     int cpu_count;
 
     /* Parse command-line arguments */
@@ -286,7 +286,7 @@ int main(int argc, char *argv[])
 			else{
 				preempt_time = -1;
 			}
-		
+		}
 	}
 	
     /* Allocate the current[] array and its mutex */
