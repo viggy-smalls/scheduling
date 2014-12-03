@@ -10,6 +10,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "os-sim.h"
 
@@ -118,20 +119,7 @@ extern void idle(unsigned int cpu_id)
 	 // mt_safe_usleep(1000000);
 }
 
-static void add_to_waiting(pcb_t *pcb)
-{
-	if(waiting == NULL)
-		waiting = pcb;
-	else if (waiting->next == NULL)
-		waiting->next = pcb;
-	else {
-		pcb_t *temp = malloc(sizeof(pcb_t));
-		temp = waiting;
-		while (temp->next != NULL)
-			temp = temp->next;
-		temp->next = pcb;
-	}
-}
+
 /*
  * preempt() is the handler called by the simulator when a process is
  * preempted due to its timeslice expiring.
