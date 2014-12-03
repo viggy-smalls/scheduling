@@ -194,10 +194,9 @@ extern void yield(unsigned int cpu_id)
 extern void terminate(unsigned int cpu_id)
 {
 	pthread_mutex_lock(&current_mutex);
-	
 	current[cpu_id]->state = PROCESS_TERMINATED;
-	
 	pthread_mutex_unlock(&current_mutex);
+	
 	schedule(cpu_id);
 }
 
