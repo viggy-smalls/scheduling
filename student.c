@@ -138,16 +138,14 @@ extern void preempt(unsigned int cpu_id)
 	pthread_mutex_lock(&ready_mutex);
 	current[cpu_id]->state = PROCESS_READY;
 	
-	//Going to the end of the linked list 
-	while(head->next != NULL){
-		head = head->next;		
-	}
-	
-	//Add it to ready
 	if(head == NULL){
 		head = current[cpu_id];
 	}
 	else{
+		//Going to the end of the linked list 
+		while(head->next != NULL){
+			head = head->next;		
+		}
 		head->next = current[cpu_id];
 	}
 
@@ -226,20 +224,16 @@ extern void wake_up(pcb_t *process)
 	//Set process to ready
 	process->state = PROCESS_READY;
 
-	//going to the end of the linked list and adding process to
-	if(head != NULL){
-	
-		while(head->next != NULL){
-			head = head->next;		
-		}
-	}
-	
-	//Insert into ready
 	pthread_mutex_lock(&ready_mutex);
+	
 	if(head == NULL){
 		head = process;
 	}
 	else{
+		//Iterate through linked list
+		while(head->next != NULL){
+				head = head->next;		
+			}
 		head->next = process;
 	}
 	pthread_cond_signal(&ready_cond);
