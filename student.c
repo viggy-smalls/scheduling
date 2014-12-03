@@ -56,6 +56,7 @@ static int preempt_time;
 static void schedule(unsigned int cpu_id)
 {
 	pcb_t *head = ready;
+	pcb_t *temp;
 	
 	if(head == NULL){ 
 		context_switch(cpu_id, NULL, preempt_time);
@@ -63,26 +64,26 @@ static void schedule(unsigned int cpu_id)
 	else{
 		//Critical section
 		pthread_mutex_lock(&ready_mutex);
-		
-		head->state = PROCESS_RUNNING;
+		temp = head;
+		temp->state = PROCESS_RUNNING;
 		
 		if(head->next == NULL){
 			head = NULL;
 		}
 		else{
-			head = head->next;
+			head = temp->next;
 		}
 		
 		//Lock current mutex
 		pthread_mutex_lock(&current_mutex);
-		current[cpu_id] = head;
+		current[cpu_id] = temp;
 		
 		//Exit Section
 		pthread_mutex_unlock(&current_mutex);
 		pthread_mutex_unlock(&ready_mutex);
 		
 		//Context switch
-		context_switch(cpu_id, head, preempt_time);
+		context_switch(cpu_id, temp, preempt_time);
 	}
 }
 
