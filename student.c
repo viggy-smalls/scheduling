@@ -60,17 +60,29 @@ static void schedule(unsigned int cpu_id)
 		context_switch(cpu_id, NULL, preempt_time);
 	}
 	else{
-		//critical section
+		//Critical section
+		pthread_mutex_lock(&ready_mutex);
+		
+		//Remove process
+		ready = ready->next;
+		
+		//Lock current mutex
 		pthread_mutex_lock(&current_mutex);
 		
-		//remove process
-		ready = ready->next;
 		current[cpu_id] = head;
+		
+		//Unlock current mutex
+		pthread_mutex_unlock(&current_mutex);
 		head->state = PROCESS_RUNNING;
 		
-		//context switch
+		//Exit Section
+		pthread_mutex_unlock(&ready_mutex);
+		
+		//Context switch
 		context_switch(cpu_id, head, preempt_time);
-		pthread_mutex_unlock(&current_mutex);
+		
+		
+		
 	}
 }
 
@@ -231,8 +243,8 @@ extern void wake_up(pcb_t *process)
  * main() simply parses command line arguments, then calls start_simulator().
  * You will need to modify it to support the -r and -p command-line parameters.
  */
-int main(int argc, char *argv[])
 {
+int main(int argc, char *argv[])
     int cpu_count;
 
     /* Parse command-line arguments */
@@ -248,14 +260,17 @@ int main(int argc, char *argv[])
     cpu_count = atoi(argv[1]);
 
     /* FIX ME - Add support for -r and -p parameters*/
-	if((int)argv[2] == 'r'){
-		rr = 1;
-		if(argv[3] != NULL){
-			preempt_time = (int)argv[3];
-		}
-		else{
-			preempt_time = -1;
-		}
+	if(argc > 2){
+	
+		if(strcmp(argv[2], '-r') == 0){
+			rr = 1;
+			if(argv[3] != NULL){
+				preempt_time = (int)argv[3];
+			}
+			else{
+				preempt_time = -1;
+			}
+		
 	}
 	
     /* Allocate the current[] array and its mutex */
