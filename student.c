@@ -34,6 +34,8 @@ static pthread_mutex_t ready_mutex;
 pthread_cond_t ready_cond;
 
 int waiting[8];
+
+//round robin variables
 int rr;
 int preempt_time;
 
@@ -255,6 +257,7 @@ extern void wake_up(pcb_t *process)
 
 int main(int argc, char *argv[]){
     int cpu_count;
+	preempt_time = -1;
 
 	for(int i = 0; i <16; i++){
 		waiting[i] = 0;
@@ -278,9 +281,6 @@ int main(int argc, char *argv[]){
 			rr = 1;
 			preempt_time = atoi(argv[3]);
 		}
-		else{
-			preempt_time = -1;
-			}
 	}
 	
     /* Allocate the current[] array and its mutex */
