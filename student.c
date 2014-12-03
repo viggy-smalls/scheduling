@@ -235,8 +235,12 @@ extern void terminate(unsigned int cpu_id)
 extern void wake_up(pcb_t *process)
 {
 	pcb_t *head = ready;
-	
 	pcb_t *new = malloc(sizeof(pcb_t));
+	
+	//Set process to ready
+	process->state = PROCESS_READY;
+	
+	//Ready a new node 
 	new->next = NULL;
 	new = process;
 	
@@ -248,9 +252,10 @@ extern void wake_up(pcb_t *process)
 	//Insert into ready
 	pthread_mutex_lock(&ready_mutex);
 	head->next = new;
+	pthread_cond_signal(&stopIdle);
 	pthread_mutex_unlock(&ready_mutex);
 
-	process->state = PROCESS_READY;
+	
 	
 }
 
@@ -278,7 +283,7 @@ int main(int argc, char *argv[]){
     /* FIX ME - Add support for -r and -p parameters*/
 	if(argc > 2){
 	
-		if(strcmp(argv[2], '-r') == 0){
+		if(strcmp(argv[2], "-r") == 0){
 			rr = 1;
 			if(argv[3] != NULL){
 				preempt_time = (int)argv[3];
