@@ -240,8 +240,11 @@ extern void wake_up(pcb_t *process)
 	//Insert into ready
 	pthread_mutex_lock(&ready_mutex);
 	head->next = new;
-	pthread_cond_signal(&stopIdle);
+	pthread_cond_signal(&ready_cond);
 	pthread_mutex_unlock(&ready_mutex);
+	
+	int i;
+	
 
 	
 	
