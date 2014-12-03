@@ -243,11 +243,6 @@ extern void wake_up(pcb_t *process)
 	pthread_cond_signal(&ready_cond);
 	pthread_mutex_unlock(&ready_mutex);
 	
-	int i;
-	
-
-	
-	
 }
 
 
