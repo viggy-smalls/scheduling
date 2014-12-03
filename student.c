@@ -27,6 +27,7 @@
  
 static pcb_t **current;  
 pcb_t *ready;
+pcb_t *head;
 
 static pthread_mutex_t current_mutex;
 static pthread_mutex_t ready_mutex;
@@ -57,7 +58,8 @@ int preempt_time;
  */
 static void schedule(unsigned int cpu_id)
 {
-	pcb_t *head = ready;
+	head = ready;
+	//printf("%d", head->pid);
 	pcb_t *temp;
 	
 	if(head == NULL){ 
@@ -65,11 +67,14 @@ static void schedule(unsigned int cpu_id)
 	}
 	else{
 		//Critical section
+		printf("I'm here\n");
 		pthread_mutex_lock(&ready_mutex);
-		temp = head;
-		temp->state = PROCESS_RUNNING;
 		
-		head = head->next;
+		ready->state = PROCESS_RUNNING;
+		temp = head;
+		//advancing the ll forward
+		ready = head->next;
+		printf("%d penis\n", head->pid);
 	
 		
 		//Lock current mutex
@@ -214,17 +219,19 @@ extern void terminate(unsigned int cpu_id)
  */
 extern void wake_up(pcb_t *process)
 {
-	pcb_t *head = ready;
+	head = ready;
 	
 	//Set process to ready
 	process->state = PROCESS_READY;
 
 	pthread_mutex_lock(&ready_mutex);
 	
-	if(head == NULL){
-		head = process;
+	if(ready == NULL){
+		printf("psdf\n");
+		ready = process;
 	}
 	else{
+		printf("nsdf\n");
 		//Iterate through linked list
 		while(head->next != NULL){
 				head = head->next;		
