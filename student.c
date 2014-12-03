@@ -64,26 +64,25 @@ static void schedule(unsigned int cpu_id)
 		//Critical section
 		pthread_mutex_lock(&ready_mutex);
 		
-		//Remove process
-		//ready = ready->next;
 		head->state = PROCESS_RUNNING;
+		
+		if(head->next == NULL){
+			head = NULL;
+		}
+		else{
+			head = head->next;
+		}
 		
 		//Lock current mutex
 		pthread_mutex_lock(&current_mutex);
-		
 		current[cpu_id] = head;
 		
-		//Unlock current mutex
-		pthread_mutex_unlock(&current_mutex);
-			
 		//Exit Section
+		pthread_mutex_unlock(&current_mutex);
 		pthread_mutex_unlock(&ready_mutex);
 		
 		//Context switch
 		context_switch(cpu_id, head, preempt_time);
-		
-		
-		
 	}
 }
 
