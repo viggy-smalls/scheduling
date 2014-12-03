@@ -267,12 +267,9 @@ int main(int argc, char *argv[]){
 
     /* FIX ME - Add support for -r and -p parameters*/
 	if(argc > 2){
-	
 		if(strcmp(argv[2], "-r") == 0){
 			rr = 1;
-			if(argv[3] != NULL){
-				preempt_time = (int)argv[3];
-			}
+			preempt_time = atoi(argv[3]);
 		}
 		else{
 			preempt_time = -1;
