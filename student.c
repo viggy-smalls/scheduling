@@ -24,12 +24,12 @@
  * for your use.
  */
  
-static pcb_t **current; 
-static pcb_t *waiting; 
+static pcb_t **current;  
 static pcb_t *ready;
 static pthread_mutex_t current_mutex;
 static pthread_mutex_t ready_mutex;
 static pthread_cond_t ready_cond;
+static int isIdle[8];
 static int rr;
 static int preempt_time;
 
@@ -95,12 +95,16 @@ static void schedule(unsigned int cpu_id)
  */
 extern void idle(unsigned int cpu_id)
 {
-    /* FIX ME */
-    while(ready == NULL){
-		pthread_cond_wait(&ready_cond, &ready_mutex);
-	}
+    //Entry
+	pthread_mutex_lock(&current_mutex);
+	waiting[cpu_id] = 0;
 	
+    while(pthread_cond_wait(&ready_cond, &ready_mutex));
+	
+	//Exit
+	pthread_mutex_unlock(&current_mutex);
 	schedule(cpu_id);
+	waiting[cpu_id] = 1;
 
     /*
      * REMOVE THE LINE BELOW AFTER IMPLEMENTING IDLE()
@@ -111,7 +115,7 @@ extern void idle(unsigned int cpu_id)
      * you implement a proper idle() function using a condition variable,
      * remove the call to mt_safe_usleep() below.
      */
-    mt_safe_usleep(1000000);
+	 // mt_safe_usleep(1000000);
 }
 
 static void add_to_waiting(pcb_t *pcb)
@@ -243,7 +247,7 @@ extern void wake_up(pcb_t *process)
  * main() simply parses command line arguments, then calls start_simulator().
  * You will need to modify it to support the -r and -p command-line parameters.
  */
-{
+
 int main(int argc, char *argv[])
     int cpu_count;
 
