@@ -291,7 +291,7 @@ int main(int argc, char *argv[]){
 	
 	/* Allocate other mutexes and condition variables as well */
 	pthread_mutex_init(&ready_mutex, NULL);
-	pthread_cond_init(&ready_cond, NULL);
+	//pthread_cond_init(&ready_cond, NULL);
 	
     /* Start the simulator in the library */
     start_simulator(cpu_count);
