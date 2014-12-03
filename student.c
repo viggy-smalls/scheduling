@@ -33,7 +33,7 @@ static pthread_mutex_t current_mutex;
 static pthread_mutex_t ready_mutex;
 pthread_cond_t ready_cond;
 
-int waiting[16];
+int waiting[8];
 int rr;
 int preempt_time;
 
