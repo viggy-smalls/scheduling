@@ -256,7 +256,7 @@ extern void wake_up(pcb_t *process)
 int main(int argc, char *argv[]){
     int cpu_count;
 
-	for(int i = 0; i <8; i++){
+	for(int i = 0; i <16; i++){
 		waiting[i] = 0;
 	}
 	
