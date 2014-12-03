@@ -152,21 +152,25 @@ extern void preempt(unsigned int cpu_id)
 		head = head->next;		
 	}
 
-	//Make a temp node to store at the end of ready
+	//Lock ready mutex
 	pthread_mutex_lock(&ready_mutex);
+	
+	//Make a temp node to store at the end of ready
 	temp = current[cpu_id];
 	temp->next = NULL;
 	temp->state = PROCESS_READY;
 	head->next = temp;
-	pthread_mutex_unlock(&ready_mutex);
 	
-	//Place into waiting queue and schedule a new process
-	add_to_waiting(current[cpu_id]);
-	current[cpu_id] = NULL;
-	schedule(cpu_id);
 	
 	//Exit section
+	pthread_mutex_unlock(&ready_mutex);
 	pthread_mutex_unlock(&current_mutex);
+	
+	//Place into waiting queue and schedule a new process
+	//add_to_waiting(current[cpu_id]);
+	schedule(cpu_id);
+	
+	
 	
 }
 
@@ -184,12 +188,16 @@ extern void yield(unsigned int cpu_id)
 	pthread_mutex_lock(&current_mutex);
 	
 	//Yield process and schedule another
-	current[cpu_id]->state = PROCESS_WAITING;
-	add_to_waiting(current[cpu_id]);
-	schedule(cpu_id);
+	if(current[cpu_id] != NULL){
+		current[cpu_id]->state = PROCESS_WAITING;
+	}
 	
 	//Exit Section
 	pthread_mutex_unlock(&current_mutex);
+	//add_to_waiting(current[cpu_id]);
+	schedule(cpu_id);
+	
+	
 }
 
 
@@ -200,7 +208,11 @@ extern void yield(unsigned int cpu_id)
  */
 extern void terminate(unsigned int cpu_id)
 {
+	pthread_mutex_lock(&current_mutex);
+	
 	current[cpu_id]->state = PROCESS_TERMINATED;
+	
+	pthread_mutex_unlock(&current_mutex);
 	schedule(cpu_id);
 }
 
