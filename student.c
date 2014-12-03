@@ -243,7 +243,7 @@ extern void wake_up(pcb_t *process)
 	//Insert into ready
 	pthread_mutex_lock(&ready_mutex);
 	if(head == NULL){
-		head == new;
+		head = new;
 	}
 	else{
 		head->next = new;
