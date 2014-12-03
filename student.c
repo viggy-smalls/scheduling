@@ -65,7 +65,8 @@ static void schedule(unsigned int cpu_id)
 		pthread_mutex_lock(&ready_mutex);
 		
 		//Remove process
-		ready = ready->next;
+		//ready = ready->next;
+		head->state = PROCESS_RUNNING;
 		
 		//Lock current mutex
 		pthread_mutex_lock(&current_mutex);
@@ -74,8 +75,7 @@ static void schedule(unsigned int cpu_id)
 		
 		//Unlock current mutex
 		pthread_mutex_unlock(&current_mutex);
-		head->state = PROCESS_RUNNING;
-		
+			
 		//Exit Section
 		pthread_mutex_unlock(&ready_mutex);
 		
@@ -223,15 +223,10 @@ extern void terminate(unsigned int cpu_id)
 extern void wake_up(pcb_t *process)
 {
 	pcb_t *head = ready;
-	pcb_t *new = malloc(sizeof(pcb_t));
 	
 	//Set process to ready
 	process->state = PROCESS_READY;
-	
-	//Ready a new node 
-	new->next = NULL;
-	new = process;
-	
+
 	//going to the end of the linked list and adding process to
 	if(head != NULL){
 	
@@ -243,10 +238,10 @@ extern void wake_up(pcb_t *process)
 	//Insert into ready
 	pthread_mutex_lock(&ready_mutex);
 	if(head == NULL){
-		head = new;
+		head = process;
 	}
 	else{
-		head->next = new;
+		head->next = process;
 	}
 	pthread_cond_signal(&ready_cond);
 	pthread_mutex_unlock(&ready_mutex);
