@@ -280,10 +280,10 @@ int main(int argc, char *argv[]){
 			if(argv[3] != NULL){
 				preempt_time = (int)argv[3];
 			}
-			else{
-				preempt_time = -1;
-			}
 		}
+		else{
+			preempt_time = -1;
+			}
 	}
 	
     /* Allocate the current[] array and its mutex */
